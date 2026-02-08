@@ -48,8 +48,8 @@ export function CategoryListing({ products }: { products: Product[] }) {
   }, [products, sort, inStock, minPrice, maxPrice, rating, brand]);
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[260px_1fr]">
-      <aside className="space-y-6 rounded-3xl border border-gray-100 p-6">
+    <div className="grid gap-10 lg:grid-cols-[280px_1fr]">
+      <aside className="space-y-6 rounded-3xl border border-gray-100 bg-white/80 p-6 lg:sticky lg:top-24 lg:self-start">
         <div>
           <h3 className="text-sm font-semibold">Filters</h3>
           <p className="mt-1 text-xs text-gray-400">Refine by price, brand, and availability.</p>
@@ -96,13 +96,16 @@ export function CategoryListing({ products }: { products: Product[] }) {
       <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-gray-500">{filtered.length} results</p>
-          <Select value={sort} onChange={(event) => setSort(event.target.value)} className="max-w-[220px]">
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+          <div className="flex items-center gap-3 text-xs text-gray-400">
+            Sort by
+            <Select value={sort} onChange={(event) => setSort(event.target.value)} className="max-w-[220px]">
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
+          </div>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filtered.slice(0, visibleCount).map((product) => (
