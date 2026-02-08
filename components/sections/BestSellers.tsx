@@ -1,12 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { products } from '@/data/products';
 import { ProductCard } from '@/components/product/ProductCard';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { useTranslations } from '@/lib/useTranslations';
+import { Product } from '@/lib/types';
 
-export function BestSellers() {
+export function BestSellers({ products }: { products: Product[] }) {
   const t = useTranslations();
   const best = products.slice(0, 4);
 

@@ -7,6 +7,9 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useTranslations } from '@/lib/useTranslations';
+import { useCartStore } from '@/store/cart';
+import { useUIStore } from '@/store/ui';
+import { useState } from 'react';
 
 const schema = z.object({
   firstName: z.string().min(2, 'First name is required'),
@@ -21,11 +24,50 @@ type CheckoutValues = z.infer<typeof schema>;
 
 export default function CheckoutPage() {
   const t = useTranslations();
+  const { items, clear } = useCartStore((state) => state);
+  const { currency } = useUIStore((state) => state);
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitSuccessful }
   } = useForm<CheckoutValues>({ resolver: zodResolver(schema) });
+
+  const onSubmit = async (values: CheckoutValues) => {
+    setStatus('submitting');
+    const payload = {
+      customer: {
+        name: `${values.firstName} ${values.lastName}`,
+        email: values.email,
+        address: `${values.address}, ${values.city}, ${values.country}`
+      },
+      currency,
+      items: items.map((item) => ({
+        productId: item.product.id,
+        title: item.product.title,
+        quantity: item.quantity,
+        price: item.product.price,
+        options: item.selectedOptions
+      }))
+    };
+
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create order');
+      }
+
+      clear();
+      setStatus('success');
+    } catch (error) {
+      setStatus('error');
+    }
+  };
 
   return (
     <PageTransition>
@@ -35,7 +77,7 @@ export default function CheckoutPage() {
             <p className="text-xs uppercase tracking-[0.3em] text-gray-400">{t.section.checkout}</p>
             <h1 className="mt-3 text-4xl font-semibold">{t.section.checkout}</h1>
           </div>
-          <form onSubmit={handleSubmit(() => undefined)} className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="space-y-8 rounded-3xl border border-gray-100 p-6">
               <div className="space-y-4">
                 <h2 className="text-lg font-semibold">{t.checkout.shipping}</h2>
@@ -99,9 +141,18 @@ export default function CheckoutPage() {
               <p className="text-sm text-gray-500">
                 Review your order and submit when ready. This is a UI-only checkout.
               </p>
-              <Button type="submit" className="w-full">
-                {isSubmitSuccessful ? 'Submitted' : t.checkout.placeOrder}
+              {status === 'success' ? (
+                <p className="text-sm text-emerald-500">Order created. Check admin for details.</p>
+              ) : null}
+              {status === 'error' ? (
+                <p className="text-sm text-red-500">Unable to create order. Try again.</p>
+              ) : null}
+              <Button type="submit" className="w-full" disabled={items.length === 0 || status === 'submitting'}>
+                {status === 'success' || isSubmitSuccessful ? 'Submitted' : t.checkout.placeOrder}
               </Button>
+              {items.length === 0 ? (
+                <p className="text-xs text-gray-400">Add items to your cart before checking out.</p>
+              ) : null}
             </div>
           </form>
         </div>

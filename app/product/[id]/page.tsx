@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { products } from '@/data/products';
+import { prisma } from '@/lib/prisma';
+import { mapProduct } from '@/lib/product';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { Rating } from '@/components/product/Rating';
@@ -8,14 +9,19 @@ import { Reviews } from '@/components/product/Reviews';
 import { ProductOptions } from './product-options';
 import { PriceTag } from '@/components/product/PriceTag';
 
-export default function ProductPage({ params }: { params: { id: string } }) {
-  const product = products.find((item) => item.id === params.id);
+export default async function ProductPage({ params }: { params: { id: string } }) {
+  const productData = await prisma.product.findUnique({ where: { id: params.id } });
 
-  if (!product) {
+  if (!productData) {
     notFound();
   }
 
-  const related = products.filter((item) => item.category === product.category && item.id !== product.id);
+  const product = mapProduct(productData);
+  const relatedData = await prisma.product.findMany({
+    where: { category: product.category, NOT: { id: product.id } },
+    take: 4
+  });
+  const related = relatedData.map(mapProduct);
 
   return (
     <PageTransition>
@@ -26,9 +32,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-gray-400">{product.brand}</p>
               <h1 className="mt-3 text-4xl font-semibold">{product.title}</h1>
-              <p className="mt-2 text-sm text-gray-500">
-                Elevated design and precision engineering for global lifestyles.
-              </p>
+              <p className="mt-2 text-sm text-gray-500">{product.description}</p>
             </div>
             <Rating value={product.rating} />
             <PriceTag product={product} />
@@ -55,7 +59,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       </section>
       <section className="section-space">
         <div className="container-padded">
-          <RelatedItems items={related.slice(0, 4)} />
+          <RelatedItems items={related} />
         </div>
       </section>
     </PageTransition>

@@ -8,6 +8,7 @@ export type ProductVariant = {
 export type Product = {
   id: string;
   title: string;
+  description: string;
   category: 'clothing' | 'phones' | 'accessories';
   price: number;
   currency: Currency;

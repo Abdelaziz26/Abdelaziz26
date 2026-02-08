@@ -4,6 +4,7 @@ export const products: Product[] = [
   {
     id: 'arc-hoodie-01',
     title: 'Arc Knit Hoodie',
+    description: 'Curated premium essential for modern global living.',
     category: 'clothing',
     price: 180,
     currency: 'USD',
@@ -23,6 +24,7 @@ export const products: Product[] = [
   {
     id: 'velo-jacket-02',
     title: 'Velo Tech Jacket',
+    description: 'Curated premium essential for modern global living.',
     category: 'clothing',
     price: 260,
     currency: 'USD',
@@ -42,6 +44,7 @@ export const products: Product[] = [
   {
     id: 'aura-tee-03',
     title: 'Aura Soft Tee',
+    description: 'Curated premium essential for modern global living.',
     category: 'clothing',
     price: 68,
     currency: 'USD',
@@ -61,6 +64,7 @@ export const products: Product[] = [
   {
     id: 'lumina-pro-01',
     title: 'Lumina Pro Max',
+    description: 'Curated premium essential for modern global living.',
     category: 'phones',
     price: 1190,
     currency: 'USD',
@@ -80,6 +84,7 @@ export const products: Product[] = [
   {
     id: 'nova-lite-02',
     title: 'Nova Lite',
+    description: 'Curated premium essential for modern global living.',
     category: 'phones',
     price: 780,
     currency: 'USD',
@@ -99,6 +104,7 @@ export const products: Product[] = [
   {
     id: 'orbit-ultra-03',
     title: 'Orbit Ultra',
+    description: 'Curated premium essential for modern global living.',
     category: 'phones',
     price: 980,
     currency: 'USD',
@@ -118,6 +124,7 @@ export const products: Product[] = [
   {
     id: 'halo-buds-01',
     title: 'Halo Buds Studio',
+    description: 'Curated premium essential for modern global living.',
     category: 'accessories',
     price: 210,
     currency: 'USD',
@@ -136,6 +143,7 @@ export const products: Product[] = [
   {
     id: 'pulse-watch-02',
     title: 'Pulse Watch X',
+    description: 'Curated premium essential for modern global living.',
     category: 'accessories',
     price: 420,
     currency: 'USD',
@@ -155,6 +163,7 @@ export const products: Product[] = [
   {
     id: 'zen-case-03',
     title: 'Zen Mag Case',
+    description: 'Curated premium essential for modern global living.',
     category: 'accessories',
     price: 54,
     currency: 'USD',

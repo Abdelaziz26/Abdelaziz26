@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { products } from '@/data/products';
+import { prisma } from '@/lib/prisma';
+import { mapProduct } from '@/lib/product';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { CategoryListing } from '@/components/product/CategoryListing';
 
@@ -7,14 +8,15 @@ const categories = ['clothing', 'phones', 'accessories'] as const;
 
 type CategorySlug = (typeof categories)[number];
 
-export default function CategoryPage({ params }: { params: { slug: string } }) {
+export default async function CategoryPage({ params }: { params: { slug: string } }) {
   const slug = params.slug as CategorySlug;
 
   if (!categories.includes(slug)) {
     notFound();
   }
 
-  const categoryProducts = products.filter((product) => product.category === slug);
+  const categoryProducts = await prisma.product.findMany({ where: { category: slug } });
+  const mapped = categoryProducts.map(mapProduct);
 
   return (
     <PageTransition>
@@ -27,7 +29,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
               Discover refined {slug} curated for global delivery.
             </p>
           </div>
-          <CategoryListing products={categoryProducts} />
+          <CategoryListing products={mapped} />
         </div>
       </section>
     </PageTransition>
