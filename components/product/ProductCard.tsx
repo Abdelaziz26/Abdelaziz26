@@ -10,6 +10,7 @@ import { useUIStore } from '@/store/ui';
 
 export function ProductCard({ product }: { product: Product }) {
   const currency = useUIStore((state) => state.currency);
+  const locale = useUIStore((state) => state.locale);
 
   return (
     <Link
@@ -32,7 +33,7 @@ export function ProductCard({ product }: { product: Product }) {
           <Badge className="bg-gray-50 text-ink-700">{product.brand}</Badge>
         </div>
         <Rating value={product.rating} />
-        <p className="text-base font-semibold text-ink-900">{formatPrice(product.price, currency)}</p>
+        <p className="text-base font-semibold text-ink-900">{formatPrice(product.price, currency, locale)}</p>
       </div>
     </Link>
   );

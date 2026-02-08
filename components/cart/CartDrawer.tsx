@@ -11,7 +11,7 @@ import { formatPrice } from '@/lib/format';
 import { useTranslations } from '@/lib/useTranslations';
 
 export function CartDrawer() {
-  const { isCartOpen, setCartOpen, currency } = useUIStore((state) => state);
+  const { isCartOpen, setCartOpen, currency, locale } = useUIStore((state) => state);
   const { items, removeItem } = useCartStore((state) => state);
   const t = useTranslations();
 
@@ -62,7 +62,7 @@ export function CartDrawer() {
                         </button>
                       </div>
                       <p className="mt-1 text-xs text-gray-500">Qty {item.quantity}</p>
-                      <p className="mt-2 text-sm">{formatPrice(item.product.price, currency)}</p>
+                      <p className="mt-2 text-sm">{formatPrice(item.product.price, currency, locale)}</p>
                     </div>
                   </div>
                 ))
@@ -74,7 +74,8 @@ export function CartDrawer() {
                 <span>
                   {formatPrice(
                     items.reduce((total, item) => total + item.product.price * item.quantity, 0),
-                    currency
+                    currency,
+                    locale
                   )}
                 </span>
               </div>

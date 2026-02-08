@@ -12,7 +12,7 @@ import { useTranslations } from '@/lib/useTranslations';
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem } = useCartStore((state) => state);
-  const currency = useUIStore((state) => state.currency);
+  const { currency, locale } = useUIStore((state) => state);
   const t = useTranslations();
 
   const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
@@ -52,7 +52,7 @@ export default function CartPage() {
                           Remove
                         </button>
                       </div>
-                      <p className="text-sm text-gray-500">{formatPrice(item.product.price, currency)}</p>
+                      <p className="text-sm text-gray-500">{formatPrice(item.product.price, currency, locale)}</p>
                       <div className="mt-2 flex items-center gap-3">
                         <Button
                           variant="secondary"
@@ -78,7 +78,7 @@ export default function CartPage() {
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-between">
                     <span>Subtotal</span>
-                    <span>{formatPrice(total, currency)}</span>
+                    <span>{formatPrice(total, currency, locale)}</span>
                   </div>
                   <div className="flex items-center justify-between text-gray-400">
                     <span>Shipping</span>
@@ -86,7 +86,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex items-center justify-between font-semibold">
                     <span>Total</span>
-                    <span>{formatPrice(total, currency)}</span>
+                    <span>{formatPrice(total, currency, locale)}</span>
                   </div>
                 </div>
                 <Link href="/checkout">
