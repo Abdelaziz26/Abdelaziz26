@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { formatPrice } from '@/lib/format';
-import { updateOrderStatus } from '../actions';
+import { OrderStatusForm } from '../order-status-form';
 
 export default async function OrderDetailPage({ params }: { params: { id: string } }) {
   const order = await prisma.order.findUnique({
@@ -49,21 +49,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
               <p>{customer.address}</p>
             </div>
           </div>
-          <form action={updateOrderStatus.bind(null, order.id)} className="rounded-3xl border border-gray-200 bg-white p-6">
-            <h2 className="text-lg font-semibold">Status</h2>
-            <select
-              name="status"
-              defaultValue={order.status}
-              className="mt-4 w-full rounded-2xl border border-gray-200 px-4 py-3"
-            >
-              {['pending', 'paid', 'shipped', 'cancelled'].map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
-            <button className="mt-4 w-full rounded-full bg-ink-900 px-6 py-3 text-sm text-white">Update status</button>
-          </form>
+          <OrderStatusForm orderId={order.id} currentStatus={order.status} />
         </div>
       </div>
     </div>

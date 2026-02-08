@@ -39,7 +39,7 @@ Use the seeded admin credentials (or the values in your `.env`):
 - Email: `admin@aurum.com`
 - Password: `admin123`
 
-Admin routes are protected at `/admin`. Sign in at `/sign-in`.
+Admin routes are protected at `/admin`. Sign in at `/account?next=/admin`.
 
 ## Admin Features
 

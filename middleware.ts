@@ -3,13 +3,16 @@ import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith('/sign-in')) {
-    return NextResponse.next();
-  }
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-  if (!token || token.role !== 'admin') {
-    const signInUrl = new URL('/sign-in', request.url);
+  if (!token) {
+    const signInUrl = new URL('/account', request.url);
+    signInUrl.searchParams.set('next', request.nextUrl.pathname);
     return NextResponse.redirect(signInUrl);
+  }
+
+  if (token.role !== 'admin') {
+    const homeUrl = new URL('/', request.url);
+    return NextResponse.redirect(homeUrl);
   }
 
   return NextResponse.next();

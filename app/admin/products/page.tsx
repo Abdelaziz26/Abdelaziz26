@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
-import { formatPrice } from '@/lib/format';
-import { deleteProduct } from './actions';
+import { ProductRow } from './product-row';
 
 export default async function AdminProductsPage() {
   const products = await prisma.product.findMany({ orderBy: { createdAt: 'desc' } });
@@ -20,28 +19,15 @@ export default async function AdminProductsPage() {
       <div className="rounded-3xl border border-gray-200 bg-white p-6">
         <div className="grid gap-4">
           {products.map((product) => (
-            <div
+            <ProductRow
               key={product.id}
-              className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-gray-100 p-4"
-            >
-              <div>
-                <p className="text-sm font-medium text-ink-900">{product.title}</p>
-                <p className="text-xs text-gray-400">
-                  {product.category} · {product.brand}
-                </p>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-500">
-                <span>{formatPrice(product.price, product.currency as 'USD' | 'EUR', 'en')}</span>
-                <Link href={`/admin/products/${product.id}/edit`} className="text-ink-900">
-                  Edit
-                </Link>
-                <form action={deleteProduct.bind(null, product.id)}>
-                  <button className="text-red-500" type="submit">
-                    Delete
-                  </button>
-                </form>
-              </div>
-            </div>
+              id={product.id}
+              title={product.title}
+              category={product.category}
+              brand={product.brand}
+              price={product.price}
+              currency={product.currency}
+            />
           ))}
         </div>
       </div>

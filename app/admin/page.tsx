@@ -8,7 +8,7 @@ export default async function AdminDashboard() {
   ]);
   const totalOrders = await prisma.order.count();
   const totalRevenue = await prisma.order.aggregate({ _sum: { total: true } });
-  const avgOrder = await prisma.order.aggregate({ _avg: { total: true } });
+  const totalProducts = await prisma.product.count();
 
   return (
     <div className="space-y-10">
@@ -20,7 +20,7 @@ export default async function AdminDashboard() {
         {[
           { label: 'Total orders', value: totalOrders },
           { label: 'Revenue', value: formatPrice(totalRevenue._sum.total ?? 0, 'USD', 'en') },
-          { label: 'Avg order value', value: formatPrice(avgOrder._avg.total ?? 0, 'USD', 'en') }
+          { label: 'Total products', value: totalProducts }
         ].map((card) => (
           <div key={card.label} className="rounded-3xl border border-gray-200 bg-white p-6 shadow-soft">
             <p className="text-xs uppercase tracking-[0.2em] text-gray-400">{card.label}</p>
@@ -32,19 +32,19 @@ export default async function AdminDashboard() {
         <div className="rounded-3xl border border-gray-200 bg-white p-6">
           <h2 className="text-lg font-semibold">Recent orders</h2>
           <div className="mt-4 space-y-3 text-sm text-gray-500">
-          {orders.length === 0 ? (
-            <p>No orders yet.</p>
-          ) : (
-            orders.map((order) => (
-              <div key={order.id} className="flex items-center justify-between rounded-2xl border border-gray-100 p-4">
-                <div>
-                  <p className="text-sm font-medium text-ink-900">#{order.id.slice(0, 6)}</p>
-                  <p className="text-xs text-gray-400">{order.status.toUpperCase()}</p>
+            {orders.length === 0 ? (
+              <p>No orders yet.</p>
+            ) : (
+              orders.map((order) => (
+                <div key={order.id} className="flex items-center justify-between rounded-2xl border border-gray-100 p-4">
+                  <div>
+                    <p className="text-sm font-medium text-ink-900">#{order.id.slice(0, 6)}</p>
+                    <p className="text-xs text-gray-400">{order.status.toUpperCase()}</p>
+                  </div>
+                  <p>{formatPrice(order.total, order.currency as 'USD' | 'EUR', 'en')}</p>
                 </div>
-                <p>{formatPrice(order.total, order.currency as 'USD' | 'EUR', 'en')}</p>
-              </div>
-            ))
-          )}
+              ))
+            )}
           </div>
         </div>
         <div className="rounded-3xl border border-gray-200 bg-white p-6">
