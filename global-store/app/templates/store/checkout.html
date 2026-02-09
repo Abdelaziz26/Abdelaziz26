@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section">
+  <h1>Checkout</h1>
+  <form id="checkout-form" class="form">
+    <div class="grid">
+      <input name="full_name" placeholder="Full name" required />
+      <input name="email" type="email" placeholder="Email" required />
+      <input name="address" placeholder="Address" required />
+      <input name="city" placeholder="City" required />
+      <input name="country" placeholder="Country" required />
+      <input name="postal" placeholder="Postal code" required />
+    </div>
+    <button class="btn" id="pay-button" type="submit">Pay with Stripe</button>
+    <p id="checkout-error" class="error"></p>
+  </form>
+</section>
+<script defer src="/static/js/cart.js"></script>
+{% endblock %}

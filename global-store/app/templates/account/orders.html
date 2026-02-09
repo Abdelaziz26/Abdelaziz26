@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section">
+  <h1>Order history</h1>
+  {% for order in orders %}
+  <div class="card">
+    <strong>{{ order.id }}</strong>
+    <p>Status: {{ order.status }}</p>
+    <p>Total: ${{ '%.2f' | format(order.total_cents / 100) }}</p>
+  </div>
+  {% else %}
+  <p>No orders yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}

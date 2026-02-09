@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section auth">
+  <h1>Create account</h1>
+  <form method="post" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <input name="name" placeholder="Name" required />
+    <input name="email" type="email" placeholder="Email" required />
+    <input name="password" type="password" placeholder="Password" required />
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    <button class="btn" type="submit">Register</button>
+  </form>
+  <a href="/account/login">Already have an account?</a>
+</section>
+{% endblock %}

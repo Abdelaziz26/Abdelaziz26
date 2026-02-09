@@ -1,0 +1,17 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<h1>Dashboard</h1>
+<div class="grid">
+  <div class="card">Revenue: ${{ '%.2f' | format(revenue / 100) }}</div>
+  <div class="card">Orders: {{ orders_count }}</div>
+</div>
+<h2>Top Products</h2>
+<div class="grid">
+  {% for product, units in top_items %}
+  <div class="card">
+    <strong>{{ product.name }}</strong>
+    <p>{{ units }} units sold</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

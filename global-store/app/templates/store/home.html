@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero">
+  <div class="hero-content">
+    <p class="eyebrow">Global essentials</p>
+    <h1>Global Store</h1>
+    <p>Modern goods curated for the everywhere lifestyle.</p>
+    <a class="btn" href="/shop">Shop the collection</a>
+  </div>
+  <div class="hero-media">
+    <div class="hero-card"></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Featured Categories</h2>
+  <div class="grid">
+    {% for category in categories %}
+    <a class="card" href="/shop?category={{ category.slug }}">
+      <h3>{{ category.name }}</h3>
+      <p>Explore essentials</p>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <h2>Best Sellers</h2>
+  <div class="grid">
+    {% for product in products %}
+    <a class="card product-card" href="/product/{{ product.slug }}">
+      <div class="product-image"></div>
+      <h3>{{ product.name }}</h3>
+      <p>${{ '%.2f' | format(product.price_cents / 100) }}</p>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="marquee">
+  <div class="marquee-track">
+    <span>Atlas</span><span>Nord</span><span>Echo</span><span>Voyage</span><span>Sol</span><span>Atlas</span>
+  </div>
+</section>
+
+<section class="section testimonials">
+  <h2>Trusted by global creatives</h2>
+  <div class="grid">
+    <div class="card">“Beautifully minimal and thoughtfully crafted.”</div>
+    <div class="card">“The checkout flow is fast and seamless.”</div>
+    <div class="card">“Everything I need in one place.”</div>
+  </div>
+</section>
+{% endblock %}

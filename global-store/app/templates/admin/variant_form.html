@@ -1,0 +1,19 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<h1>{{ 'Edit' if variant else 'New' }} Variant for {{ product.name }}</h1>
+<form method="post" class="form">
+  <input type="hidden" name="csrf_token" value="{{ request.cookies.get('csrf_token') }}" />
+  <input name="sku" placeholder="SKU" value="{{ variant.sku if variant }}" required />
+  <input name="color" placeholder="Color" value="{{ variant.color if variant }}" required />
+  <input name="size" placeholder="Size" value="{{ variant.size if variant }}" required />
+  <input name="stock" type="number" placeholder="Stock" value="{{ variant.stock if variant }}" required />
+  <input name="price_cents_override" type="number" placeholder="Price override (cents)" value="{{ variant.price_cents_override if variant }}" />
+  <button class="btn" type="submit">Save</button>
+</form>
+{% if variant %}
+<form method="post" action="/admin/variants/{{ variant.id }}/delete">
+  <input type="hidden" name="csrf_token" value="{{ request.cookies.get('csrf_token') }}" />
+  <button class="btn ghost" type="submit">Delete</button>
+</form>
+{% endif %}
+{% endblock %}

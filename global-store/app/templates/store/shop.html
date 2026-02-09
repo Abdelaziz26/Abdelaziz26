@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section">
+  <h1>Shop</h1>
+  <div class="filters" aria-label="Product filters">
+    <input id="search" type="search" placeholder="Search" aria-label="Search products" />
+    <select id="category" aria-label="Filter by category">
+      <option value="">All categories</option>
+      {% for category in categories %}
+      <option value="{{ category.slug }}">{{ category.name }}</option>
+      {% endfor %}
+    </select>
+    <input id="min-price" type="number" placeholder="Min" aria-label="Min price" />
+    <input id="max-price" type="number" placeholder="Max" aria-label="Max price" />
+    <select id="sort" aria-label="Sort products">
+      <option value="newest">Newest</option>
+      <option value="price_asc">Price: Low to High</option>
+      <option value="price_desc">Price: High to Low</option>
+    </select>
+    <button id="apply-filters" class="btn">Apply</button>
+  </div>
+  <div id="product-grid" class="grid"></div>
+  <button id="load-more" class="btn ghost">Load more</button>
+</section>
+<script defer src="/static/js/shop.js"></script>
+{% endblock %}
