@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/admin';
 import { stringifyJson } from '@/lib/serialization';
+import { productSchema } from '@/lib/adminValidation';
 
 export async function GET() {
   const auth = await requireAdmin();
@@ -18,24 +19,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
   const body = await request.json();
-
-  if (!body.title || body.price === undefined || !body.currency || !body.category) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  const parsed = productSchema.safeParse({
+    ...body,
+    price: Number(body.price),
+    stock: Number(body.stock ?? 0),
+    rating: Number(body.rating ?? 4.5)
+  });
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
   }
 
   const product = await prisma.product.create({
     data: {
-      title: body.title,
-      description: body.description ?? '',
-      price: Number(body.price),
-      currency: body.currency,
-      category: body.category,
-      brand: body.brand ?? '',
-      stock: Number(body.stock ?? 0),
-      rating: Number(body.rating ?? 4.5),
-      images: stringifyJson(body.images ?? []),
-      tags: stringifyJson(body.tags ?? []),
-      variants: stringifyJson(body.variants ?? [])
+      title: parsed.data.title,
+      description: parsed.data.description,
+      price: parsed.data.price,
+      currency: parsed.data.currency,
+      category: parsed.data.category,
+      brand: parsed.data.brand,
+      stock: parsed.data.stock,
+      rating: parsed.data.rating,
+      images: stringifyJson(parsed.data.images),
+      tags: stringifyJson(parsed.data.tags),
+      variants: stringifyJson(parsed.data.variants)
     }
   });
 

@@ -19,7 +19,8 @@ export default function NewProductPage() {
           stock: 0,
           rating: 4.5,
           images: '',
-          tags: ''
+          tags: '',
+          variants: ''
         }}
       />
     </div>

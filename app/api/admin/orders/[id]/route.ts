@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/admin';
+import { orderStatusSchema } from '@/lib/adminValidation';
 
 export async function GET(request: Request, context: { params: { id: string } }) {
   const auth = await requireAdmin();
@@ -25,15 +26,14 @@ export async function PATCH(request: Request, context: { params: { id: string } 
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
   const body = await request.json();
-  const allowed = new Set(['pending', 'paid', 'shipped', 'cancelled']);
-
-  if (!body.status || !allowed.has(body.status)) {
+  const parsed = orderStatusSchema.safeParse(body.status);
+  if (!parsed.success) {
     return NextResponse.json({ error: 'Status required' }, { status: 400 });
   }
 
   const order = await prisma.order.update({
     where: { id: context.params.id },
-    data: { status: body.status }
+    data: { status: parsed.data }
   });
 
   return NextResponse.json(order);

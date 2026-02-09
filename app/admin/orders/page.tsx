@@ -1,15 +1,37 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { formatPrice } from '@/lib/format';
+import { orderStatusValues } from '@/lib/adminValidation';
 
-export default async function OrdersPage() {
-  const orders = await prisma.order.findMany({ orderBy: { createdAt: 'desc' } });
+export default async function OrdersPage({ searchParams }: { searchParams: { status?: string } }) {
+  const status = searchParams.status;
+  const orders = await prisma.order.findMany({
+    where: status && orderStatusValues.includes(status as typeof orderStatusValues[number]) ? { status } : undefined,
+    orderBy: { createdAt: 'desc' }
+  });
 
   return (
     <div className="space-y-6">
       <div>
         <p className="text-xs uppercase tracking-[0.3em] text-gray-400">Operations</p>
         <h1 className="mt-3 text-3xl font-semibold">Orders</h1>
+      </div>
+      <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400">
+        <span>Filter</span>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/admin/orders" className="rounded-full border border-gray-200 px-3 py-1 text-xs">
+            All
+          </Link>
+          {orderStatusValues.map((value) => (
+            <Link
+              key={value}
+              href={`/admin/orders?status=${value}`}
+              className="rounded-full border border-gray-200 px-3 py-1 text-xs"
+            >
+              {value}
+            </Link>
+          ))}
+        </div>
       </div>
       <div className="rounded-3xl border border-gray-200 bg-white p-6">
         <div className="grid gap-4">

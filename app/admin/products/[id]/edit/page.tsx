@@ -29,7 +29,8 @@ export default async function EditProductPage({ params }: { params: { id: string
           stock: product.stock,
           rating: product.rating,
           images: parseJson<string[]>(product.images, []).join(', '),
-          tags: parseJson<string[]>(product.tags, []).join(', ')
+          tags: parseJson<string[]>(product.tags, []).join(', '),
+          variants: product.variants ?? ''
         }}
       />
     </div>

@@ -1,10 +1,12 @@
 import { prisma } from '@/lib/prisma';
 import { formatPrice } from '@/lib/format';
+import Link from 'next/link';
 
 export default async function AdminDashboard() {
-  const [orders, products] = await Promise.all([
+  const [orders, products, lowStock] = await Promise.all([
     prisma.order.findMany({ orderBy: { createdAt: 'desc' }, take: 5 }),
-    prisma.product.findMany({ take: 5 })
+    prisma.product.findMany({ take: 5 }),
+    prisma.product.findMany({ where: { stock: { lt: 5 } }, take: 5 })
   ]);
   const totalOrders = await prisma.order.count();
   const totalRevenue = await prisma.order.aggregate({ _sum: { total: true } });
@@ -47,15 +49,39 @@ export default async function AdminDashboard() {
             )}
           </div>
         </div>
-        <div className="rounded-3xl border border-gray-200 bg-white p-6">
-          <h2 className="text-lg font-semibold">Top products</h2>
-          <div className="mt-4 space-y-3 text-sm text-gray-500">
-            {products.map((product) => (
-              <div key={product.id} className="flex items-center justify-between">
-                <p>{product.title}</p>
-                <p className="text-ink-900">{formatPrice(product.price, product.currency as 'USD' | 'EUR', 'en')}</p>
-              </div>
-            ))}
+        <div className="space-y-6">
+          <div className="rounded-3xl border border-gray-200 bg-white p-6">
+            <h2 className="text-lg font-semibold">Top products</h2>
+            <div className="mt-4 space-y-3 text-sm text-gray-500">
+              {products.map((product) => (
+                <div key={product.id} className="flex items-center justify-between">
+                  <p>{product.title}</p>
+                  <p className="text-ink-900">
+                    {formatPrice(product.price, product.currency as 'USD' | 'EUR', 'en')}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-3xl border border-gray-200 bg-white p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Low stock</h2>
+              <Link href="/admin/products" className="text-xs text-gray-400">
+                View all
+              </Link>
+            </div>
+            <div className="mt-4 space-y-3 text-sm text-gray-500">
+              {lowStock.length === 0 ? (
+                <p>All products are healthy.</p>
+              ) : (
+                lowStock.map((product) => (
+                  <div key={product.id} className="flex items-center justify-between">
+                    <p>{product.title}</p>
+                    <p className="text-ink-900">{product.stock} left</p>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>

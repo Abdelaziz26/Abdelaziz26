@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { Toast } from '@/components/ui/Toast';
 
 const statuses = ['pending', 'paid', 'shipped', 'cancelled'] as const;
 
@@ -9,6 +10,7 @@ type OrderStatus = (typeof statuses)[number];
 export function OrderStatusForm({ orderId, currentStatus }: { orderId: string; currentStatus: OrderStatus }) {
   const [status, setStatus] = useState<OrderStatus>(currentStatus);
   const [state, setState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
   async function updateStatus(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -25,8 +27,10 @@ export function OrderStatusForm({ orderId, currentStatus }: { orderId: string; c
       }
 
       setState('saved');
+      setToast({ message: 'Status updated.', variant: 'success' });
     } catch (error) {
       setState('error');
+      setToast({ message: 'Update failed.', variant: 'error' });
     }
   }
 
@@ -54,6 +58,7 @@ export function OrderStatusForm({ orderId, currentStatus }: { orderId: string; c
       >
         {state === 'saving' ? 'Updating...' : 'Update status'}
       </button>
+      {toast ? <Toast message={toast.message} variant={toast.variant} onDismiss={() => setToast(null)} /> : null}
     </form>
   );
 }

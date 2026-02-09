@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { Toast } from '@/components/ui/Toast';
 
 type ProductFormValues = {
   id?: string;
@@ -14,6 +15,7 @@ type ProductFormValues = {
   rating: number;
   images: string;
   tags: string;
+  variants: string;
 };
 
 export function ProductForm({
@@ -25,6 +27,7 @@ export function ProductForm({
 }) {
   const [state, setState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [error, setError] = useState('');
+  const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -32,6 +35,19 @@ export function ProductForm({
     setError('');
 
     const formData = new FormData(event.currentTarget);
+    let parsedVariants: unknown = [];
+    const variantsRaw = String(formData.get('variants') ?? '').trim();
+    if (variantsRaw) {
+      try {
+        parsedVariants = JSON.parse(variantsRaw);
+      } catch {
+        setState('error');
+        setError('Variants must be valid JSON.');
+        setToast({ message: 'Invalid JSON in variants.', variant: 'error' });
+        return;
+      }
+    }
+
     const payload = {
       title: String(formData.get('title') ?? ''),
       description: String(formData.get('description') ?? ''),
@@ -48,7 +64,8 @@ export function ProductForm({
       tags: String(formData.get('tags') ?? '')
         .split(',')
         .map((item) => item.trim())
-        .filter(Boolean)
+        .filter(Boolean),
+      variants: parsedVariants
     };
 
     if (!payload.title || Number.isNaN(payload.price) || !payload.currency || !payload.category) {
@@ -72,12 +89,14 @@ export function ProductForm({
       }
 
       setState('saved');
+      setToast({ message: 'Product saved.', variant: 'success' });
       if (mode === 'create') {
         window.location.href = '/admin/products';
       }
     } catch (err) {
       setState('error');
       setError('Unable to save product.');
+      setToast({ message: 'Unable to save product.', variant: 'error' });
     }
   }
 
@@ -162,6 +181,12 @@ export function ProductForm({
         defaultValue={initialValues.tags}
         className="rounded-2xl border border-gray-200 px-4 py-3"
       />
+      <textarea
+        name="variants"
+        placeholder='Variants JSON (e.g. [{"name":"Size","options":["S","M"]}])'
+        defaultValue={initialValues.variants}
+        className="min-h-[120px] rounded-2xl border border-gray-200 px-4 py-3 font-mono text-xs"
+      />
       {error ? <p className="text-sm text-red-500">{error}</p> : null}
       {state === 'saved' ? <p className="text-sm text-emerald-500">Saved.</p> : null}
       <button
@@ -171,6 +196,9 @@ export function ProductForm({
       >
         {state === 'saving' ? 'Saving...' : mode === 'create' ? 'Create product' : 'Save changes'}
       </button>
+      {toast ? (
+        <Toast message={toast.message} variant={toast.variant} onDismiss={() => setToast(null)} />
+      ) : null}
     </form>
   );
 }

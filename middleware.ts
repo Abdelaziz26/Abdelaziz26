@@ -11,8 +11,9 @@ export async function middleware(request: NextRequest) {
   }
 
   if (token.role !== 'admin') {
-    const homeUrl = new URL('/', request.url);
-    return NextResponse.redirect(homeUrl);
+    const messageUrl = new URL('/account', request.url);
+    messageUrl.searchParams.set('message', 'not-admin');
+    return NextResponse.redirect(messageUrl);
   }
 
   return NextResponse.next();

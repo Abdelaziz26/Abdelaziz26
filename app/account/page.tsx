@@ -12,6 +12,7 @@ export default function AccountPage() {
   const t = useTranslations();
   const searchParams = useSearchParams();
   const [error, setError] = useState('');
+  const message = searchParams.get('message');
 
   async function handleSignIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -46,6 +47,11 @@ export default function AccountPage() {
           <div className="grid gap-8 lg:grid-cols-2">
             <div className="space-y-4 rounded-3xl border border-gray-100 p-6">
               <h2 className="text-lg font-semibold">{t.account.signIn}</h2>
+              {message === 'not-admin' ? (
+                <p className="rounded-2xl bg-amber-50 px-4 py-3 text-xs text-amber-700">
+                  Your account does not have admin access.
+                </p>
+              ) : null}
               <form onSubmit={handleSignIn} className="space-y-4">
                 <Input name="email" placeholder="Email" type="email" required />
                 <Input name="password" placeholder="Password" type="password" required />

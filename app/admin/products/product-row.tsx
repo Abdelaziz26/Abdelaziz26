@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/format';
+import { Toast } from '@/components/ui/Toast';
 
 type ProductRowProps = {
   id: string;
@@ -15,17 +16,21 @@ type ProductRowProps = {
 
 export function ProductRow({ id, title, category, brand, price, currency }: ProductRowProps) {
   const [status, setStatus] = useState<'idle' | 'deleting' | 'error'>('idle');
+  const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
   async function handleDelete() {
+    if (!window.confirm('Delete this product?')) return;
     setStatus('deleting');
     try {
       const response = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
       if (!response.ok) {
         throw new Error('Failed');
       }
+      setToast({ message: 'Product deleted.', variant: 'success' });
       window.location.reload();
     } catch (error) {
       setStatus('error');
+      setToast({ message: 'Delete failed.', variant: 'error' });
     }
   }
 
@@ -47,6 +52,7 @@ export function ProductRow({ id, title, category, brand, price, currency }: Prod
         </button>
       </div>
       {status === 'error' ? <p className="text-xs text-red-500">Delete failed.</p> : null}
+      {toast ? <Toast message={toast.message} variant={toast.variant} onDismiss={() => setToast(null)} /> : null}
     </div>
   );
 }
