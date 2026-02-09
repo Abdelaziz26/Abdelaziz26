@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { mapProduct } from '@/lib/product';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -8,6 +9,24 @@ import { RelatedItems } from '@/components/product/RelatedItems';
 import { Reviews } from '@/components/product/Reviews';
 import { ProductOptions } from './product-options';
 import { PriceTag } from '@/components/product/PriceTag';
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const product = await prisma.product.findUnique({ where: { id: params.id } });
+  if (!product) {
+    return { title: 'Product not found' };
+  }
+  const title = `${product.title} · Aurum`;
+  const description = product.description;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'product'
+    }
+  };
+}
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
   const productData = await prisma.product.findUnique({ where: { id: params.id } });
