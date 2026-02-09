@@ -1,0 +1,24 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<h1>Order {{ order.id }}</h1>
+<p>Status: {{ order.status }}</p>
+<p>Total: ${{ '%.2f' | format(order.total_cents / 100) }}</p>
+<form method="post" action="/admin/orders/{{ order.id }}/status" class="form">
+  <input type="hidden" name="csrf_token" value="{{ request.cookies.get('csrf_token') }}" />
+  <select name="status">
+    {% for status in ['PENDING', 'PAID', 'SHIPPED', 'REFUNDED'] %}
+    <option value="{{ status }}" {% if order.status == status %}selected{% endif %}>{{ status }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn" type="submit">Update</button>
+</form>
+<h2>Items</h2>
+{% for item in order.items %}
+  <div class="card">
+    <p>{{ item.product_id }} - Qty {{ item.qty }}</p>
+    <p>${{ '%.2f' | format(item.unit_price_cents / 100) }}</p>
+  </div>
+{% else %}
+  <p>No items.</p>
+{% endfor %}
+{% endblock %}

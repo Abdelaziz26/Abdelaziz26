@@ -1,0 +1,14 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<h1>Orders</h1>
+<div class="grid">
+  {% for order in orders %}
+  <div class="card">
+    <strong>{{ order.id }}</strong>
+    <p>Status: {{ order.status }}</p>
+    <p>Total: ${{ '%.2f' | format(order.total_cents / 100) }}</p>
+    <a class="btn ghost" href="/admin/orders/{{ order.id }}">View</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

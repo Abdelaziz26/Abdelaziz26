@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <h2>Admin</h2>
+    <nav>
+      <a href="/admin">Dashboard</a>
+      <a href="/admin/categories">Categories</a>
+      <a href="/admin/products">Products</a>
+      <a href="/admin/orders">Orders</a>
+    </nav>
+  </aside>
+  <section class="admin-content">
+    {% block admin_content %}{% endblock %}
+  </section>
+</div>
+<script defer src="/static/js/admin.js"></script>
+{% endblock %}

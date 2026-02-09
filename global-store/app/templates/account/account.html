@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section">
+  <h1>Account</h1>
+  <div class="card">
+    <h2>{{ user.name }}</h2>
+    <p>{{ user.email }}</p>
+    <form method="post" action="/account/logout">
+      <input type="hidden" name="csrf_token" value="{{ request.cookies.get('csrf_token') }}" />
+      <button class="btn ghost" type="submit">Log out</button>
+    </form>
+  </div>
+  <a class="btn" href="/account/orders">View orders</a>
+</section>
+{% endblock %}

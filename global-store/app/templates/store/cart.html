@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section">
+  <h1>Your Cart</h1>
+  <div id="cart-page-items" class="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-total">Total: <span id="cart-page-total">$0.00</span></div>
+    <a class="btn" href="/checkout">Continue to checkout</a>
+  </div>
+</section>
+<script defer src="/static/js/cart.js"></script>
+{% endblock %}
